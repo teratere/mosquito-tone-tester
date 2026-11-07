@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mosquito Tone Tester - モスキート音・耳年齢可聴域チェッカー</title>
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* レンジスライダーのカスタムスタイル */
+    input[type=range] {
+      accent-color: #06b6d4;
+    }
+
+    /* サイバー感のあるネオングロー */
+    .glow-cyan {
+      box-shadow: 0 0 25px rgba(6, 182, 212, 0.35);
+    }
+    .glow-active {
+      box-shadow: 0 0 35px rgba(244, 63, 94, 0.6), inset 0 0 15px rgba(244, 63, 94, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
+
+  <!-- ヘッダー（共通ポータル動線準拠） -->
+  <header class="border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition py-1.5 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700">
+          <i class="fa-solid fa-arrow-left text-[10px]"></i>
+          <span>Apps Hub</span>
+        </a>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-800/60 text-cyan-400 flex items-center justify-center text-sm shadow-sm">
+            <i class="fa-solid fa-wave-square"></i>
+          </div>
+          <div>
+            <h1 class="text-sm font-bold tracking-tight text-white">Mosquito Tone Tester</h1>
+            <p class="text-[10px] text-slate-400 leading-none">モスキート音・耳年齢可聴域チェッカー</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-cyan-950 text-cyan-400 border border-cyan-800/60">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+          Pure Sine 8k-22kHz
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="max-w-4xl mx-auto px-4 py-6 w-full flex-1 space-y-6">
+
+    <!-- 【大幅強化】身体への影響・安全に関する重要注意事項パネル -->
+    <section class="bg-amber-950/40 border-2 border-amber-600/70 rounded-3xl p-5 sm:p-6 shadow-xl text-amber-100 space-y-4">
+      <div class="flex items-center gap-2.5 text-amber-400 border-b border-amber-800/60 pb-3">
+        <i class="fa-solid fa-triangle-exclamation text-2xl animate-pulse"></i>
+        <h2 class="text-sm sm:text-base font-black tracking-wide uppercase">
+          【警告】ご使用前の健康・身体への影響に関する注意事項
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs leading-relaxed">
+        <div class="bg-black/50 border border-amber-800/50 p-3.5 rounded-2xl space-y-1.5">
+          <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs sm:text-sm">
+            <i class="fa-solid fa-ear-deaf text-amber-400"></i>
+            1. 「聞こえない＝安全」ではありません
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            高周波音は自覚できなくても、内耳（有毛細胞）には強い音圧エネルギーが届いています。「聞こえないから」と音量を上げすぎると、自覚のないまま聴覚を傷める危険があります。
+          </p>
+        </div>
+
+        <div class="bg-black/50 border border-amber-800/50 p-3.5 rounded-2xl space-y-1.5">
+          <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs sm:text-sm">
+            <i class="fa-solid fa-head-side-cough text-amber-400"></i>
+            2. 頭痛・めまい・耳鳴り・自律神経の乱れ
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            モスキート音や超高音波を聴き続けると、不快感や頭痛、吐き気、一過性の耳鳴りを誘発することがあります。少しでも違和感を覚えた場合は直ちに停止してください。
+          </p>
+        </div>
+
+        <div class="bg-black/50 border border-amber-800/50 p-3.5 rounded-2xl space-y-1.5">
+          <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs sm:text-sm">
+            <i class="fa-solid fa-shield-halved text-amber-400"></i>
+            3. 自動オートオフタイマー（最大3秒）
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            長時間の暴露を防ぐため、1回の発振は最長3秒（1〜5秒選択可）で自動停止します。出力音量も最大15.0%に強制固定しています。
+          </p>
+        </div>
+
+        <div class="bg-black/50 border border-amber-800/50 p-3.5 rounded-2xl space-y-1.5">
+          <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs sm:text-sm">
+            <i class="fa-solid fa-paw text-amber-400"></i>
+            4. ペット（犬・猫等）がいる部屋での再生禁止
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            犬（約45kHz）や猫（約64kHz）などの動物は人間よりはるかに高周波に敏感で、強い苦痛を感じます。ペットのいる室内や近距離でのスピーカー再生は絶対に行わないでください。
+          </p>
+        </div>
+      </div>
+
+      <!-- 即時利用停止・完全無保証の明記ブロック -->
+      <div class="bg-rose-950/70 border-2 border-rose-500/80 rounded-2xl p-4 space-y-2 text-rose-100 shadow-inner">
+        <div class="flex items-center gap-2 text-rose-300 font-black text-xs sm:text-sm">
+          <i class="fa-solid fa-hand text-base text-rose-400"></i>
+          <span>【重要】心身の不調を感じた場合は直ちに利用を停止してください</span>
+        </div>
+        <p class="text-[11px] sm:text-xs text-rose-200/90 leading-relaxed font-medium">
+          再生中に耳の痛み、違和感、耳鳴り、頭痛、めまい、吐き気などの不快感や心身の不調を感じた場合は、<strong>直ちに音声を停止し、必要に応じて医師の診察を受けてください。</strong>
+        </p>
+        <div class="pt-2 border-t border-rose-800/60 text-[11px] text-rose-200/80 flex items-start gap-1.5">
+          <i class="fa-solid fa-circle-exclamation text-rose-400 mt-0.5 shrink-0"></i>
+          <span>
+            <strong>【いかなる保証もいたしません】</strong>
+            本アプリは個人開発のプロトタイプであり、医療機器や健康診断ツールではありません。動作の完全性・安全性、身体や聴覚への影響、およびテスト結果の医学的正確性等について<strong>いかなる保証も行いません。すべて利用者ご自身の判断と自己責任においてご利用ください。</strong>
+          </span>
+        </div>
+      </div>
+
+      <div class="text-[11px] text-amber-300/80 pt-1 flex items-center gap-2">
+        <i class="fa-solid fa-lock text-amber-400"></i>
+        <span>※鼓膜を保護するため、音量は最大15.0%で強制ロックされ、安全タイマーにより自動で停止します。</span>
+      </div>
+    </section>
+
+    <!-- メインコントロール & 波形オシロスコープ -->
+    <section class="bg-slate-900/80 rounded-3xl p-5 sm:p-8 border border-slate-800/80 shadow-2xl space-y-6">
+      
+      <!-- オシロスコープ表示スクリーン -->
+      <div class="relative w-full h-36 sm:h-44 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between p-3">
+        <!-- スクリーンヘッダー -->
+        <div class="flex items-center justify-between text-[11px] font-mono-code text-slate-500 z-10">
+          <span class="flex items-center gap-1.5">
+            <span id="oscilloscopeStatusDot" class="w-2 h-2 rounded-full bg-slate-700"></span>
+            <span id="oscilloscopeStatusText">STANDBY</span>
+          </span>
+          <span id="screenFreqDisplay">0 Hz / Sine Wave</span>
+        </div>
+
+        <!-- Canvas波形描画 -->
+        <canvas id="scopeCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+        <!-- スクリーンフッター（年齢目安バッジ） -->
+        <div class="flex items-center justify-between text-[11px] font-mono-code z-10">
+          <span class="text-slate-500">ESTIMATED AUDIBLE AGE:</span>
+          <span id="screenAgeBadge" class="font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+            --
+          </span>
+        </div>
+      </div>
+
+      <!-- 周波数巨大インジケーター & 再生トグルボタン -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pt-2">
+        
+        <!-- 周波数・年齢表示 -->
+        <div class="text-center sm:text-left space-y-1">
+          <div class="text-xs uppercase font-bold tracking-wider text-slate-400">Target Frequency</div>
+          <div class="flex items-baseline justify-center sm:justify-start gap-2">
+            <span id="freqLargeNumber" class="text-4xl sm:text-5xl font-black text-cyan-400 font-mono-code tracking-tight">17,400</span>
+            <span class="text-lg font-bold text-slate-500 font-mono-code">Hz</span>
+          </div>
+          <div class="text-xs text-slate-400 flex items-center justify-center sm:justify-start gap-1.5">
+            <span>耳年齢の目安:</span>
+            <strong id="ageEstimateLabel" class="text-cyan-300 font-bold">〜10代若者向け（代表的モスキート音）</strong>
+          </div>
+        </div>
+
+        <!-- 再生/停止メインボタン & 自動オートオフ秒数 -->
+        <div class="flex flex-col items-center sm:items-end gap-2.5">
+          <button id="togglePlayBtn" class="px-8 py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-black text-base shadow-lg shadow-cyan-500/25 transition-all flex items-center gap-3 cursor-pointer">
+            <i id="playIcon" class="fa-solid fa-play text-lg"></i>
+            <span id="playLabel">発振スタート (3秒)</span>
+          </button>
+
+          <!-- 安全タイマー時間選択 -->
+          <div class="flex items-center gap-1.5 text-[11px] font-mono-code text-slate-400">
+            <span class="text-amber-400 flex items-center gap-1 font-bold">
+              <i class="fa-solid fa-stopwatch"></i> 自動停止:
+            </span>
+            <button onclick="setAutoStopDuration(1)" id="btn-dur-1" class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition cursor-pointer">1秒</button>
+            <button onclick="setAutoStopDuration(3)" id="btn-dur-3" class="px-2 py-0.5 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-800 transition font-bold cursor-pointer">3秒</button>
+            <button onclick="setAutoStopDuration(5)" id="btn-dur-5" class="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition cursor-pointer">5秒</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 周波数スライダー（1Hz単位） -->
+      <div class="space-y-2 pt-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-sliders text-cyan-400"></i> 周波数微調整 (8,000Hz 〜 22,000Hz)
+          </span>
+          <div class="flex items-center gap-1">
+            <button onclick="adjustFreq(-100)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] font-mono-code cursor-pointer">-100</button>
+            <button onclick="adjustFreq(-10)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] font-mono-code cursor-pointer">-10</button>
+            <button onclick="adjustFreq(10)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] font-mono-code cursor-pointer">+10</button>
+            <button onclick="adjustFreq(100)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] font-mono-code cursor-pointer">+100</button>
+          </div>
+        </div>
+        <input type="range" id="freqSlider" min="8000" max="22000" step="1" value="17400" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer">
+      </div>
+
+      <!-- ボリューム音量スライダー（案A：0%〜15.0%完全同期リミッター） -->
+      <div class="space-y-2 pt-2 border-t border-slate-800/80">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-volume-high text-cyan-400"></i> 出力音量（安全リミッター: 最大15.0%に強制固定）
+          </span>
+          <span id="volumePercent" class="font-mono-code text-cyan-300 font-bold">5.0%</span>
+        </div>
+        <input type="range" id="volumeSlider" min="0" max="0.15" step="0.005" value="0.05" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer">
+        <div class="flex justify-between text-[10px] text-slate-500 font-mono-code">
+          <span>0.0% (消音)</span>
+          <span>推奨: 3.0%〜5.0%</span>
+          <span class="text-amber-400 font-bold">15.0% (安全上限)</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 年齢別プリセットボタン一覧 -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-layer-group text-cyan-400"></i> 周波数 ＆ 年齢目安プリセット
+        </h3>
+        <span class="text-[11px] text-slate-500">ワンタップで周波数を切替</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        
+        <button onclick="applyPreset(8000)" class="preset-btn p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition group cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-400 font-bold group-hover:text-cyan-300">8,000 Hz</div>
+          <div class="text-xs font-bold text-slate-200 mt-0.5">〜60代以上</div>
+          <div class="text-[10px] text-slate-500 mt-1">一般会話高音域</div>
+        </button>
+
+        <button onclick="applyPreset(10000)" class="preset-btn p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition group cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-400 font-bold group-hover:text-cyan-300">10,000 Hz</div>
+          <div class="text-xs font-bold text-slate-200 mt-0.5">〜50代</div>
+          <div class="text-[10px] text-slate-500 mt-1">50代の平均可聴域</div>
+        </button>
+
+        <button onclick="applyPreset(12000)" class="preset-btn p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition group cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-400 font-bold group-hover:text-cyan-300">12,000 Hz</div>
+          <div class="text-xs font-bold text-slate-200 mt-0.5">〜40代</div>
+          <div class="text-[10px] text-slate-500 mt-1">40代の平均限界域</div>
+        </button>
+
+        <button onclick="applyPreset(14000)" class="preset-btn p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition group cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-400 font-bold group-hover:text-cyan-300">14,000 Hz</div>
+          <div class="text-xs font-bold text-slate-200 mt-0.5">〜30代</div>
+          <div class="text-[10px] text-slate-500 mt-1">30代の平均可聴域</div>
+        </button>
+
+        <button onclick="applyPreset(16000)" class="preset-btn p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition group cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-400 font-bold group-hover:text-cyan-300">16,000 Hz</div>
+          <div class="text-xs font-bold text-slate-200 mt-0.5">〜20代</div>
+          <div class="text-[10px] text-slate-500 mt-1">20代前半まで聞こえる音</div>
+        </button>
+
+        <!-- 代表的モスキート音 -->
+        <button onclick="applyPreset(17400)" class="preset-btn p-3 rounded-2xl bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-800/80 text-left transition group ring-1 ring-cyan-500/30 cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-300 font-black">17,400 Hz ★</div>
+          <div class="text-xs font-bold text-white mt-0.5">代表モスキート</div>
+          <div class="text-[10px] text-cyan-200/80 mt-1">〜10代若者向け音響</div>
+        </button>
+
+        <button onclick="applyPreset(18000)" class="preset-btn p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition group cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-400 font-bold group-hover:text-cyan-300">18,000 Hz</div>
+          <div class="text-xs font-bold text-slate-200 mt-0.5">10代後半まで</div>
+          <div class="text-[10px] text-slate-500 mt-1">高校生前後の可聴域</div>
+        </button>
+
+        <button onclick="applyPreset(20000)" class="preset-btn p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition group cursor-pointer">
+          <div class="text-[11px] font-mono-code text-cyan-400 font-bold group-hover:text-cyan-300">20,000 Hz</div>
+          <div class="text-xs font-bold text-slate-200 mt-0.5">子供〜極限限界</div>
+          <div class="text-[10px] text-slate-500 mt-1">人間耳の理論上の限界</div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- 自動スイープテスト機能（限界周波数の特定） -->
+    <section class="bg-slate-900/60 rounded-3xl p-5 sm:p-6 border border-slate-800/80 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-cyan-400"></i>
+            自動スイープ可聴域テスト
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">周波数を連続的に上昇させ、どこまで聞こえるかをテストします</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="startSweepUpBtn" onclick="toggleSweep('up')" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-2 border border-slate-700 cursor-pointer">
+          <i class="fa-solid fa-arrow-trend-up text-cyan-400"></i>
+          <span id="sweepUpLabel">上昇スイープ開始 (8k → 20kHz)</span>
+        </button>
+
+        <button id="startSweepDownBtn" onclick="toggleSweep('down')" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-2 border border-slate-700 cursor-pointer">
+          <i class="fa-solid fa-arrow-trend-down text-cyan-400"></i>
+          <span id="sweepDownLabel">下降スイープ開始 (20k → 8kHz)</span>
+        </button>
+
+        <button onclick="stopPlayback()" class="px-4 py-2.5 rounded-xl bg-rose-950/60 hover:bg-rose-900/60 text-rose-300 text-xs font-bold transition border border-rose-800/60 cursor-pointer">
+          即時停止
+        </button>
+      </div>
+
+      <!-- スイープ進捗バー -->
+      <div id="sweepProgressBarContainer" class="w-full bg-slate-950 rounded-full h-2 overflow-hidden hidden border border-slate-800">
+        <div id="sweepProgressBar" class="bg-cyan-500 h-full w-0 transition-all duration-100"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- フッター免責事項（取り決め正式文面・ポータル標準仕様） -->
+  <footer class="border-t border-slate-800/80 py-5 text-center text-slate-500 text-xs space-y-1">
+    <p class="max-w-2xl mx-auto px-4">
+      ※個人開発プロトタイプにつき無保証・自己責任にてご利用ください（データは端末内完結・サポート対象外）
+    </p>
+    <p class="text-[11px] text-slate-600">&copy; 2026 selfup.net</p>
+  </footer>
+
+  <script>
+    /* ========================================================
+       Web Audio API による高周波サイン波発振エンジン
+    ======================================================== */
+    let audioCtx = null;
+    let oscNode = null;
+    let gainNode = null;
+    let analyserNode = null;
+
+    let isPlaying = false;
+    let currentFreq = 17400;
+    let currentVolume = 0.05; // 初期音量5%（安全基準）
+
+    // 自動停止安全タイマー
+    let autoStopSec = 3; // デフォルト3秒で自動停止
+    let autoStopTimer = null;
+    let countdownInterval = null;
+    let remainingSec = 0;
+
+    // スイープタイマー
+    let sweepInterval = null;
+    let isSweeping = false;
+
+    // DOM要素
+    const togglePlayBtn = document.getElementById('togglePlayBtn');
+    const playIcon = document.getElementById('playIcon');
+    const playLabel = document.getElementById('playLabel');
+    const freqLargeNumber = document.getElementById('freqLargeNumber');
+    const ageEstimateLabel = document.getElementById('ageEstimateLabel');
+    const freqSlider = document.getElementById('freqSlider');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumePercent = document.getElementById('volumePercent');
+    const screenFreqDisplay = document.getElementById('screenFreqDisplay');
+    const screenAgeBadge = document.getElementById('screenAgeBadge');
+    const oscilloscopeStatusDot = document.getElementById('oscilloscopeStatusDot');
+    const oscilloscopeStatusText = document.getElementById('oscilloscopeStatusText');
+    const sweepProgressBarContainer = document.getElementById('sweepProgressBarContainer');
+    const sweepProgressBar = document.getElementById('sweepProgressBar');
+    const sweepUpLabel = document.getElementById('sweepUpLabel');
+    const sweepDownLabel = document.getElementById('sweepDownLabel');
+
+    // Canvas オシロスコープ
+    const canvas = document.getElementById('scopeCanvas');
+    const canvasCtx = canvas ? canvas.getContext('2d') : null;
+    let animationFrameId = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    /**
+     * 年齢目安の計算と文字列取得
+     */
+    function getAgeEstimation(freq) {
+      if (freq <= 8500) {
+        return { text: '〜60代以上（日常会話域）', badge: '60代〜' };
+      } else if (freq <= 10500) {
+        return { text: '〜50代（標準的な50代限界）', badge: '〜50代' };
+      } else if (freq <= 12500) {
+        return { text: '〜40代（40代の平均可聴域）', badge: '〜40代' };
+      } else if (freq <= 14500) {
+        return { text: '〜30代（30代の平均可聴域）', badge: '〜30代' };
+      } else if (freq <= 16500) {
+        return { text: '〜20代（若者可聴域）', badge: '〜20代' };
+      } else if (freq <= 17500) {
+        return { text: '〜10代若者向け（代表的モスキート音）', badge: '10代' };
+      } else if (freq <= 18500) {
+        return { text: '10代後半まで（高校生前後の限界域）', badge: '10代後半' };
+      } else if (freq <= 19500) {
+        return { text: '子供・小中学生（非常に高い可聴域）', badge: '子供' };
+      } else {
+        return { text: '人間耳の理論上の極限限界（20kHz超）', badge: '極限限界' };
+      }
+    }
+
+    /**
+     * UI表示の更新
+     */
+    function updateDisplay(freq) {
+      currentFreq = freq;
+      if (freqLargeNumber) freqLargeNumber.textContent = freq.toLocaleString();
+      if (freqSlider) freqSlider.value = freq;
+      
+      const estimation = getAgeEstimation(freq);
+      if (ageEstimateLabel) ageEstimateLabel.textContent = estimation.text;
+      if (screenAgeBadge) screenAgeBadge.textContent = estimation.badge;
+
+      if (screenFreqDisplay) {
+        if (isPlaying) {
+          screenFreqDisplay.textContent = `${freq.toLocaleString()} Hz / ACTIVE`;
+        } else {
+          screenFreqDisplay.textContent = `${freq.toLocaleString()} Hz / Sine Wave`;
+        }
+      }
+    }
+
+    /**
+     * 安全自動停止時間の設定
+     */
+    function setAutoStopDuration(sec) {
+      if (isPlaying) stopPlayback();
+      autoStopSec = sec;
+      ['1', '3', '5'].forEach(s => {
+        const btn = document.getElementById(`btn-dur-${s}`);
+        if (!btn) return;
+        if (s == sec) {
+          btn.className = 'px-2 py-0.5 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-800 transition font-bold cursor-pointer';
+        } else {
+          btn.className = 'px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition cursor-pointer';
+        }
+      });
+      if (playLabel && !isPlaying) {
+        playLabel.textContent = `発振スタート (${sec}秒)`;
+      }
+    }
+
+    /**
+     * 発振開始
+     */
+    function startPlayback() {
+      const ctx = getAudioContext();
+      if (isPlaying) return;
+
+      // オシレーター生成（純粋なサイン波）
+      oscNode = ctx.createOscillator();
+      oscNode.type = 'sine';
+      oscNode.frequency.setValueAtTime(currentFreq, ctx.currentTime);
+
+      // 安全ゲイン（0〜0.15上限）
+      gainNode = ctx.createGain();
+      const safeGain = Math.min(0.15, Math.max(0, currentVolume));
+
+      // フェードイン（突入ノイズ防止）
+      gainNode.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(Math.max(0.0001, safeGain), ctx.currentTime + 0.05);
+
+      // アナライザーノード（Canvas波形用）
+      analyserNode = ctx.createAnalyser();
+      analyserNode.fftSize = 2048;
+
+      // 接続
+      oscNode.connect(gainNode);
+      gainNode.connect(analyserNode);
+      analyserNode.connect(ctx.destination);
+
+      oscNode.start();
+      isPlaying = true;
+
+      // UI反映
+      if (togglePlayBtn) {
+        togglePlayBtn.classList.remove('bg-cyan-500', 'hover:bg-cyan-400');
+        togglePlayBtn.classList.add('bg-rose-500', 'hover:bg-rose-400', 'glow-active');
+      }
+      if (playIcon) playIcon.className = 'fa-solid fa-stop text-lg';
+      
+      // 自動停止カウントダウンの始動
+      remainingSec = autoStopSec;
+      if (playLabel) playLabel.textContent = `停止 (${remainingSec}s)`;
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        remainingSec--;
+        if (remainingSec > 0) {
+          if (playLabel) playLabel.textContent = `停止 (${remainingSec}s)`;
+        } else {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+
+      clearTimeout(autoStopTimer);
+      autoStopTimer = setTimeout(() => {
+        stopPlayback();
+      }, autoStopSec * 1000);
+
+      if (oscilloscopeStatusDot) {
+        oscilloscopeStatusDot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
+      }
+      if (oscilloscopeStatusText) {
+        oscilloscopeStatusText.textContent = 'OSCILLATING';
+        oscilloscopeStatusText.className = 'text-cyan-400 font-bold';
+      }
+      if (screenFreqDisplay) {
+        screenFreqDisplay.textContent = `${currentFreq.toLocaleString()} Hz / ACTIVE`;
+      }
+
+      startScopeAnimation();
+    }
+
+    /**
+     * 発振停止
+     */
+    function stopPlayback() {
+      clearTimeout(autoStopTimer);
+      clearInterval(countdownInterval);
+
+      if (!isPlaying) return;
+
+      if (isSweeping) {
+        stopSweep();
+      }
+
+      if (gainNode && audioCtx) {
+        gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+        
+        setTimeout(() => {
+          if (oscNode) {
+            try { oscNode.stop(); oscNode.disconnect(); } catch (e) {}
+            oscNode = null;
+          }
+        }, 50);
+      }
+
+      isPlaying = false;
+
+      // UI反映
+      if (togglePlayBtn) {
+        togglePlayBtn.classList.remove('bg-rose-500', 'hover:bg-rose-400', 'glow-active');
+        togglePlayBtn.classList.add('bg-cyan-500', 'hover:bg-cyan-400');
+      }
+      if (playIcon) playIcon.className = 'fa-solid fa-play text-lg';
+      if (playLabel) playLabel.textContent = `発振スタート (${autoStopSec}秒)`;
+
+      if (oscilloscopeStatusDot) {
+        oscilloscopeStatusDot.className = 'w-2 h-2 rounded-full bg-slate-700';
+      }
+      if (oscilloscopeStatusText) {
+        oscilloscopeStatusText.textContent = 'STANDBY';
+        oscilloscopeStatusText.className = 'text-slate-500';
+      }
+      if (screenFreqDisplay) {
+        screenFreqDisplay.textContent = `${currentFreq.toLocaleString()} Hz / Sine Wave`;
+      }
+    }
+
+    /**
+     * 周波数の動的変更
+     */
+    function setFrequency(freq) {
+      currentFreq = Math.min(22000, Math.max(8000, Math.round(freq)));
+      updateDisplay(currentFreq);
+
+      if (oscNode && audioCtx && isPlaying) {
+        oscNode.frequency.setTargetAtTime(currentFreq, audioCtx.currentTime, 0.01);
+      }
+    }
+
+    function adjustFreq(delta) {
+      if (isSweeping) stopSweep();
+      setFrequency(currentFreq + delta);
+    }
+
+    function applyPreset(freq) {
+      if (isSweeping) stopSweep();
+      setFrequency(freq);
+      if (!isPlaying) {
+        startPlayback();
+      }
+    }
+
+    /**
+     * ボリュームの動的変更（案A：0%〜15.0%完全同期）
+     */
+    function setVolume(vol) {
+      const parsed = parseFloat(vol);
+      currentVolume = Math.min(0.15, Math.max(0, isNaN(parsed) ? 0.05 : parsed));
+      if (volumeSlider) volumeSlider.value = currentVolume;
+      if (volumePercent) volumePercent.textContent = `${(currentVolume * 100).toFixed(1)}%`;
+
+      if (gainNode && audioCtx && isPlaying) {
+        gainNode.gain.setTargetAtTime(Math.max(0.0001, currentVolume), audioCtx.currentTime, 0.02);
+      }
+    }
+
+    /* ========================================================
+       自動スイープテスト
+    ======================================================== */
+    function toggleSweep(direction) {
+      if (isSweeping) {
+        stopSweep();
+        return;
+      }
+
+      isSweeping = true;
+      if (sweepProgressBarContainer) sweepProgressBarContainer.classList.remove('hidden');
+
+      const startF = direction === 'up' ? 8000 : 20000;
+      const endF = direction === 'up' ? 20000 : 8000;
+      const totalSteps = 120;
+      const stepTime = 100;
+      let currentStep = 0;
+
+      setFrequency(startF);
+      if (!isPlaying) startPlayback();
+
+      if (sweepUpLabel && sweepDownLabel) {
+        if (direction === 'up') {
+          sweepUpLabel.textContent = 'スイープ停止';
+        } else {
+          sweepDownLabel.textContent = 'スイープ停止';
+        }
+      }
+
+      sweepInterval = setInterval(() => {
+        currentStep++;
+        const progress = currentStep / totalSteps;
+        const targetF = startF + (endF - startF) * progress;
+
+        setFrequency(targetF);
+        if (sweepProgressBar) sweepProgressBar.style.width = `${progress * 100}%`;
+
+        if (currentStep >= totalSteps) {
+          stopSweep();
+          stopPlayback();
+        }
+      }, stepTime);
+    }
+
+    function stopSweep() {
+      clearInterval(sweepInterval);
+      sweepInterval = null;
+      isSweeping = false;
+      if (sweepProgressBarContainer) sweepProgressBarContainer.classList.add('hidden');
+      if (sweepProgressBar) sweepProgressBar.style.width = '0%';
+      if (sweepUpLabel) sweepUpLabel.textContent = '上昇スイープ開始 (8k → 20kHz)';
+      if (sweepDownLabel) sweepDownLabel.textContent = '下降スイープ開始 (20k → 8kHz)';
+    }
+
+    /* ========================================================
+       Canvas オシロスコープ波形描画
+    ======================================================== */
+    function resizeCanvas() {
+      if (!canvas) return;
+      const parent = canvas.parentElement;
+      const w = parent ? parent.clientWidth : 600;
+      const h = parent ? parent.clientHeight : 160;
+      if (w > 0 && h > 0) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+    }
+
+    function startScopeAnimation() {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+      function draw() {
+        animationFrameId = requestAnimationFrame(draw);
+        if (!canvasCtx || !canvas) return;
+
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 基準グリッド線
+        canvasCtx.lineWidth = 1;
+        canvasCtx.strokeStyle = 'rgba(30, 41, 59, 0.6)';
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(0, canvas.height / 2);
+        canvasCtx.lineTo(canvas.width, canvas.height / 2);
+        canvasCtx.stroke();
+
+        if (!isPlaying || !analyserNode) {
+          canvasCtx.lineWidth = 1.5;
+          canvasCtx.strokeStyle = 'rgba(71, 85, 105, 0.4)';
+          canvasCtx.beginPath();
+          canvasCtx.moveTo(0, canvas.height / 2);
+          canvasCtx.lineTo(canvas.width, canvas.height / 2);
+          canvasCtx.stroke();
+          return;
+        }
+
+        const bufferLength = analyserNode.frequencyBinCount;
+        const timeData = new Uint8Array(bufferLength);
+        analyserNode.getByteTimeDomainData(timeData);
+
+        // 波形パス描画
+        canvasCtx.lineWidth = 2;
+        canvasCtx.strokeStyle = '#06b6d4';
+        canvasCtx.shadowColor = '#06b6d4';
+        canvasCtx.shadowBlur = 8;
+        canvasCtx.beginPath();
+
+        const sliceWidth = canvas.width / bufferLength;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const v = timeData[i] / 128.0;
+          const y = (v * canvas.height) / 2;
+
+          if (i === 0) {
+            canvasCtx.moveTo(x, y);
+          } else {
+            canvasCtx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
+        }
+
+        canvasCtx.stroke();
+        canvasCtx.shadowBlur = 0;
+      }
+
+      draw();
+    }
+
+    /* ========================================================
+       イベントリスナー登録
+    ======================================================== */
+    if (togglePlayBtn) {
+      togglePlayBtn.addEventListener('click', () => {
+        if (isPlaying) {
+          stopPlayback();
+        } else {
+          startPlayback();
+        }
+      });
+    }
+
+    if (freqSlider) {
+      freqSlider.addEventListener('input', (e) => {
+        if (isSweeping) stopSweep();
+        setFrequency(e.target.value);
+      });
+    }
+
+    if (volumeSlider) {
+      volumeSlider.addEventListener('input', (e) => {
+        setVolume(e.target.value);
+      });
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      updateDisplay(17400);
+      setVolume(0.05);
+      startScopeAnimation();
+    });
+  </script>
+</body>
+</html>
